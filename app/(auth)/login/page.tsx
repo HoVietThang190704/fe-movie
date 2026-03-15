@@ -1,4 +1,5 @@
 "use client";
+import { login } from "@/action/login/login";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -41,8 +42,12 @@ export default function Login() {
     validators: {
       onSubmit: loginSchema,
     },
-    onSubmit: (values) => {
-      console.log("Form submitted with values:", values);
+    onSubmit: async (values) => {
+      const formData = new FormData();
+      formData.append("email", values.value.email);
+      formData.append("password", values.value.password);
+      login(formData);
+      
     },
   });
   return (
@@ -77,6 +82,7 @@ export default function Login() {
                     <Input
                       id={field.name}
                       value={field.state.value}
+                      type="password"
                       onChange={(e) => field.setValue(e.target.value)}
                       placeholder="Enter your email"
                     />
@@ -95,7 +101,7 @@ export default function Login() {
               Login
             </Button>
             <Button asChild variant="outline" className="w-1/2">
-              <Link href="/(auth)/register">Register</Link>
+              <Link href="/register">Register</Link>
             </Button>
           </Field>
         </CardFooter>

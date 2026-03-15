@@ -1,10 +1,16 @@
-import type { NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
+import { TokenManager, tokenType } from "./lib/token";
+import jwt from "jsonwebtoken";
 
-export function proxy(request: NextRequest) {
-    const cookies = request.cookies.get("token");
-    if (!cookies) {
-        console.log("No token found in cookies");
-    }
+export async function proxy(request: NextRequest) {
+  const token = await TokenManager.getToken(tokenType.ACCESS);
+  if (!token) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+  const verified = jwt.verify(token, process.env.JWT_SECRET_KEY as string);
+  if (!verified) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
 }
 
 export const config = {
