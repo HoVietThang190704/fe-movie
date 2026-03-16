@@ -20,6 +20,8 @@ import { useForm } from "@tanstack/react-form";
 export default function RegisterPage() {
   const form = useForm({
     defaultValues: {
+      username: "",
+      name: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -29,6 +31,8 @@ export default function RegisterPage() {
     },
     onSubmit: async (values) => {
       const formData = new FormData();
+      formData.append("username", values.value.username);
+      formData.append("name", values.value.name);
       formData.append("email", values.value.email);
       formData.append("password", values.value.password);
       formData.append("confirmPassword", values.value.confirmPassword);
@@ -44,6 +48,38 @@ export default function RegisterPage() {
         <CardContent>
           <form onSubmit={form.handleSubmit}>
             <FieldGroup>
+              <form.Field name="username"> 
+                {(field) => (
+                  <Field>
+                    <FieldLabel htmlFor={field.name}>Username</FieldLabel>
+                    <Input
+                      id={field.name}
+                      value={field.state.value}
+                      onChange={(e) => field.setValue(e.target.value)}
+                      placeholder="Enter your username"
+                    />
+                    {field.state.meta.errors && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                )}
+              </form.Field>
+              <form.Field name="name"> 
+                {(field) => (
+                  <Field>
+                    <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+                    <Input
+                      id={field.name}
+                      value={field.state.value}
+                      onChange={(e) => field.setValue(e.target.value)}
+                      placeholder="Enter your name"
+                    />
+                    {field.state.meta.errors && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                )}
+              </form.Field>
               <form.Field name="email">
                 {(field) => (
                   <Field>

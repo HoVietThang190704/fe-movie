@@ -48,6 +48,8 @@ export class AuthService {
   }
 
   async register (
+    username: string,
+    name: string,
     email: string,
     password: string,
     confirmPassword: string
@@ -62,7 +64,7 @@ export class AuthService {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password, confirmPassword }),
+        body: JSON.stringify({ username, name, email, password, confirmPassword }),
       });
       return await response.json();
     } catch (error) {

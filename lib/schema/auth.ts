@@ -17,6 +17,8 @@ export const loginSchema = z.object({
 
 export const registerSchema = z
   .object({
+    username: z.string().min(3, "Username phải có ít nhất 3 ký tự").max(20, "Username quá dài"),
+    name: z.string().min(2, "Name phải có ít nhất 2 ký tự").max(50, "Name quá dài"),
     email: z.email("Email không hợp lệ"), // Kiểm tra định dạng email
     password: passwordSchema,
     confirmPassword: z.string(),
