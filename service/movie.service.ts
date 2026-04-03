@@ -4,8 +4,8 @@ import { Endpoint } from "../lib/shared/constants/endpoint";
 import { UrlBuilder } from "../lib/urlbuilder";
 
 export type MovieFilter = {
-    category: string;
-    name: string;
+    category?: string;
+    name?: string;
 }
 
 export class MovieService {
