@@ -9,9 +9,10 @@ export async function generateStaticParams() {
   const response: BaseResponse<Movie[]> =
     await MovieService.getInstance().getMovies();
 
-  return response.data?.map((movie) => ({
-    slug: String(movie.slug),
-  }));
+  const slugs =
+    response.data?.map((movie) => ({ slug: String(movie.slug) })) ?? [];
+
+  return slugs;
 }
 
 export default async function Page(props: PageProps<"/movie/[slug]">) {

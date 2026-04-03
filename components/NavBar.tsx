@@ -18,7 +18,7 @@ const navItems = [
   },
   {
     name: "Search",
-    href: "/search",
+    href: "/movie/search",
   },
   {
     name: "Standalone films",

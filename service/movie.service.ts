@@ -5,6 +5,7 @@ import { UrlBuilder } from "../lib/urlbuilder";
 
 export type MovieFilter = {
     category: string;
+    name: string;
 }
 
 export class MovieService {
@@ -21,6 +22,9 @@ export class MovieService {
             const url = new UrlBuilder().addPath(Endpoint.MOVIES);
             if(filter?.category) {
                 url.addQueryParam('category', filter?.category);
+            }
+            if(filter?.name) {
+                url.addQueryParam('name', filter?.name);
             }
             return await fetch(url.build()).then((res) => res.json());
             
