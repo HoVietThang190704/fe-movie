@@ -7,11 +7,11 @@ import Link from "next/link";
 
 type MovieCardProps = {
   movie: Movie;
-};
+} & React.HTMLAttributes<HTMLAnchorElement>;
 
-export function MovieCard({ movie }: MovieCardProps) {
+export function MovieCard({ movie, ...props }: MovieCardProps) {
   return (
-    <Link href={`/movie/${movie.slug}`} className="group h-72 w-32">
+    <Link href={`/movie/${movie.slug}`} className="group h-72 w-32" {...props}>
       <Card className="h-full overflow-hidden border-0 bg-transparent shadow-none transition-all duration-300 ">
         <CardContent className="p-0 space-y-3">
           <div className="relative aspect-[2/3] w-full overflow-hidden rounded-xl bg-muted">

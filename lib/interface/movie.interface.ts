@@ -1,3 +1,5 @@
+import { Category } from "./category.interface";
+
 export type Tmdb = {
   type: string | null;
   id: string;
@@ -10,12 +12,6 @@ export type Imdb = {
   id: string;
   vote_average: number;
   vote_count: number;
-};
-
-export type Category = {
-  id?: string;
-  name?: string;
-  slug?: string;
 };
 
 export type Country = {

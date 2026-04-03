@@ -23,7 +23,7 @@ async function fetchMoviesByCategories(): Promise<
 
   const results = await Promise.all(
     MOVIE_CATEGORIES.map((category) =>
-      movieService.getMovies({category})
+      movieService.getMovies({ category, name: "" })
     ),
   );
 
