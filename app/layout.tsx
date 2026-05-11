@@ -6,6 +6,8 @@ import NavBar from "@/components/NavBar";
 import { AuthProvider } from "@/provider/AuthProvider";
 import { getSession } from "@/lib/getSession";
 
+export const dynamic = "force-dynamic";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

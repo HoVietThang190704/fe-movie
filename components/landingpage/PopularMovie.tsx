@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import { Movie } from "@/lib/interface/movie.interface";
 import {
@@ -11,7 +11,7 @@ import {
 } from "../ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { cn } from "@/lib/utils";
-import { Star, Play, Info } from "lucide-react";
+import { Star, Play, Info, Volume2, VolumeX } from "lucide-react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 
@@ -22,6 +22,8 @@ type PopularMovieProps = {
 export default function PopularMovie({ movies }: PopularMovieProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [currIndex, setCurrIndex] = useState(0);
+  const [isMuted, setIsMuted] = useState(true);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const onSelect = useCallback(() => {
     if (!api) return;
@@ -37,6 +39,25 @@ export default function PopularMovie({ movies }: PopularMovieProps) {
       api.off("select", onSelect);
     };
   }, [api, onSelect]);
+
+  // Mute video on mount
+  useEffect(() => {
+    if (!iframeRef.current) return;
+    
+    // Delay longer to ensure iframe is fully loaded
+    const timeout = setTimeout(() => {
+      if (iframeRef.current) {
+        iframeRef.current.contentWindow?.postMessage(
+          '{"event":"command","func":"mute"}',
+          '*'
+        );
+        // Ensure state matches video state
+        setIsMuted(true);
+      }
+    }, 1000);
+    
+    return () => clearTimeout(timeout);
+  }, [currIndex]);
 
   if (!movies || movies.length === 0) return null;
 
@@ -55,20 +76,37 @@ export default function PopularMovie({ movies }: PopularMovieProps) {
     return match ? match[1] : null;
   };
 
+  const toggleMute = () => {
+    if (!iframeRef.current) return;
+    
+    // Send command to YouTube iframe
+    const newMutedState = !isMuted;
+    const command = newMutedState ? 
+      '{"event":"command","func":"mute"}' :
+      '{"event":"command","func":"unMute"}';
+    
+    iframeRef.current.contentWindow?.postMessage(command, '*');
+    // Update state immediately
+    setIsMuted(newMutedState);
+  };
+
+
   const renderTrailerOverlay = (movie: Movie, isActive: boolean) => {
     if (!movie.trailer_url || !isActive) return null;
 
     const ytId = getYouTubeId(movie.trailer_url);
     if (!ytId) return null;
 
-    const embedUrl = `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&mute=1&loop=1&playlist=${ytId}&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&enablejsapi=1&origin=${typeof window !== "undefined" ? window.location.origin : ""}`;
+    const embedUrl = `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&loop=1&playlist=${ytId}&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&enablejsapi=1&origin=${typeof window !== "undefined" ? window.location.origin : ""}`;
 
     return (
-      <div className="absolute inset-0 transition-opacity duration-1000 opacity-100">
+      <div className="absolute inset-0 transition-opacity duration-1000 opacity-100 pointer-events-none">
         <iframe
+          ref={iframeRef}
           src={embedUrl}
-          className="absolute inset-0 w-full h-[120%] -top-[10%] pointer-events-none scale-110 "
+          className="absolute inset-0 w-full h-[120%] -top-[10%] scale-110"
           allow="autoplay; encrypted-media"
+          allowFullScreen
           title={movie.name}
         />
       </div>
@@ -101,6 +139,17 @@ export default function PopularMovie({ movies }: PopularMovieProps) {
           );
         })}
       </div>
+
+      {/* Mute Button - Positioned above all content */}
+      {currentMovie?.trailer_url && (
+        <button
+          onClick={toggleMute}
+          className="absolute top-6 right-6 z-30 bg-black/60 hover:bg-black/80 text-white p-3 rounded-full transition-colors pointer-events-auto"
+          aria-label={isMuted ? "Unmute" : "Mute"}
+        >
+          {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
+        </button>
+      )}
 
       {/* Main Content Area */}
       <div className="relative z-10 h-full w-full justify-center px-6 md:px-12 py-16 lg:py-0 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-12">

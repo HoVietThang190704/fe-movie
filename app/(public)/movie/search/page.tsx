@@ -19,7 +19,7 @@ export default async function Page(props: PageProps<"/movie/search">) {
 
   return (
     <div className="flex flex-col items-center w-full">
-      <SearchFilter searchName={searchName} categories={categories.data || []} />
+      <SearchFilter searchParams={searchName} categories={categories.data || []} />
       <SearchList filteredMovies={movieResponseBySearch.data || []} />
     </div>
   )
